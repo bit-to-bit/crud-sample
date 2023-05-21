@@ -40,6 +40,7 @@ public class ClientService {
         }
         return -1l;
     }
+
     public String getById(long id) throws Exception {
         String functionName = "ClientService.getById(): ";
         String result = "";
@@ -47,7 +48,7 @@ public class ClientService {
             PreparedStatement statement = connection.prepareStatement("SELECT name FROM client WHERE id = ?;");
             statement.setLong(1, id);
             ResultSet resultSet = statement.executeQuery();
-            if(resultSet.next()) {
+            if (resultSet.next()) {
                 result = resultSet.getString("name");
             }
             statement.close();
@@ -57,6 +58,7 @@ public class ClientService {
         }
         return result;
     }
+
     public void setName(long id, String name) throws Exception {
         String functionName = "ClientService.setName(): ";
         try {
@@ -74,30 +76,31 @@ public class ClientService {
         }
     }
 
-public void deleteById(long id) throws Exception {
-    String functionName = "ClientService.deleteById(): ";
-    try {
-        PreparedStatement statement = connection.prepareStatement("DELETE FROM client WHERE id = ?;");
-        statement.setLong(1, id);
-        int rowCount = statement.executeUpdate();
-        if (rowCount == 0) {
-            LOG.info(functionName + "The client was not delete");
+    public void deleteById(long id) throws Exception {
+        String functionName = "ClientService.deleteById(): ";
+        try {
+            PreparedStatement statement = connection.prepareStatement("DELETE FROM client WHERE id = ?;");
+            statement.setLong(1, id);
+            int rowCount = statement.executeUpdate();
+            if (rowCount == 0) {
+                LOG.info(functionName + "The client was not delete");
+            }
+            statement.close();
+        } catch (Exception e) {
+            LOG.error(functionName + e);
+            throw new Exception(functionName + e);
         }
-        statement.close();
-    } catch (Exception e) {
-        LOG.error(functionName + e);
-        throw new Exception(functionName + e);
     }
-    }
-public List<Client> listAll() throws Exception {
+
+    public List<Client> listAll() throws Exception {
         String functionName = "ClientService.listAll(): ";
         List<Client> clientList = new ArrayList<>();
         try {
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery("SELECT id, name FROM client;");
-            while(resultSet.next()) {
+            while (resultSet.next()) {
                 Client record = new Client(resultSet.getLong("id"),
-                                           resultSet.getString("name"));
+                        resultSet.getString("name"));
                 clientList.add(record);
             }
             statement.close();

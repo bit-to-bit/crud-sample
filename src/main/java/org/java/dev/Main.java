@@ -4,7 +4,6 @@ import org.java.dev.configuration.LoggingConfiguration;
 import org.java.dev.crud.entity.Client;
 import org.java.dev.crud.service.ClientService;
 
-import java.io.IOException;
 import java.util.List;
 
 public class Main {
