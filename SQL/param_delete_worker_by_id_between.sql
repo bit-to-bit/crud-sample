@@ -1,0 +1,1 @@
+DELETE FROM worker WHERE id BETWEEN ? AND ?;

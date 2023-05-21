@@ -1,0 +1,53 @@
+DROP TABLE project_worker IF EXISTS;
+DROP TABLE project IF EXISTS;
+DROP TABLE client IF EXISTS;
+DROP TABLE worker IF EXISTS;
+
+CREATE TABLE IF NOT EXISTS worker(
+    ID BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    NAME VARCHAR(1000) CHECK (CHAR_LENGTH(NAME) >= 2),
+    BIRTHDAY DATE CHECK (EXTRACT(YYYY FROM BIRTHDAY) > 1900),
+    LEVEL VARCHAR(7) NOT NULL CHECK (LEVEL IN ('Trainee', 'Junior', 'Middle', 'Senior')),
+    SALARY INTEGER CHECK (SALARY BETWEEN 100 AND 100000)
+);
+
+COMMENT ON TABLE worker IS 'Працівники'; 
+COMMENT ON COLUMN worker.ID IS 'ID працівника'; 
+COMMENT ON COLUMN worker.name IS 'Імя працівника'; 
+COMMENT ON COLUMN worker.birthday IS 'Дата народження'; 
+COMMENT ON COLUMN worker.level IS 'Рівень технічного розвитку працівника'; 
+COMMENT ON COLUMN worker.level IS 'Заробітна плата працівника за 1 місяць, грн.'; 
+
+CREATE TABLE  IF NOT EXISTS client(
+    ID BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    NAME VARCHAR(1000) CHECK (CHAR_LENGTH(NAME) >= 2) 
+);  
+COMMENT ON TABLE client IS 'Клієнти'; 
+COMMENT ON COLUMN client.ID IS 'ID клієнта'; 
+COMMENT ON COLUMN client.name IS 'Імя клієнта';
+
+CREATE TABLE  IF NOT EXISTS project(
+    ID BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    CLIENT_ID BIGINT, 
+    START_DATE DATE,
+    FINISH_DATE DATE,
+    CONSTRAINT FK_PROJECT_CLIENT FOREIGN KEY (CLIENT_ID) REFERENCES client(ID) ON DELETE NO ACTION
+);
+
+COMMENT ON TABLE project IS 'Проекти'; 
+COMMENT ON COLUMN project.ID IS 'ID проекта'; 
+COMMENT ON COLUMN project.CLIENT_ID IS 'ID клієнта, що замовив цей проєкт'; 
+COMMENT ON COLUMN project.START_DATE IS 'Дата початку виконання проєкту'; 
+COMMENT ON COLUMN project.FINISH_DATE IS 'Дата кінця виконання проєкту'; 
+
+CREATE TABLE IF NOT EXISTS project_worker(
+    PROJECT_ID BIGINT NOT NULL,
+    WORKER_ID BIGINT NOT NULL,
+    PRIMARY KEY (PROJECT_ID, WORKER_ID),
+    CONSTRAINT FK_PROJECT_WOKER_ON_PROJECT FOREIGN KEY (PROJECT_ID) REFERENCES project(ID) ON DELETE NO ACTION,
+    CONSTRAINT FK_PROJECT_WOKER_ON_WORKER FOREIGN KEY (WORKER_ID) REFERENCES worker(ID) ON DELETE NO ACTION
+);     
+
+COMMENT ON TABLE project_worker IS 'Працівники, призначені на проекти';     
+COMMENT ON COLUMN project_worker.PROJECT_ID IS 'ID проекта'; 
+COMMENT ON COLUMN project_worker.WORKER_ID IS 'ID працівника';
